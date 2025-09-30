@@ -1,57 +1,46 @@
-# sd-webui-hub: A1111 + JupyterLab + nginx + supervisor
-# Base: CUDA 12.1 + cuDNN on Ubuntu 22.04
+# ---- Base: CUDA + cuDNN on Ubuntu 22.04 ----
 FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
 
-ARG DEBIAN_FRONTEND=noninteractive
-ENV TZ=UTC
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1
 
-# --- Versions / paths ---
-ARG WEBUI_VERSION=v1.10.1
-ENV REPO_DIR=/opt/webui \
-    VENV_DIR=/opt/venv \
-    DATA_DIR=/workspace/a1111-data
-
-# --- System deps (incl. OpenCV runtime), nginx, supervisor ---
+# System deps: Python, pip, git, tini (nice PID 1), basics
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git ca-certificates tini bash \
-    python3 python3-venv python3-pip \
-    libgl1 libglib2.0-0 libsm6 libxext6 libxrender1 \
-    nginx supervisor && \
-    rm -rf /var/lib/apt/lists/*
+      python3 python3-pip python3-venv python3-dev \
+      git curl ca-certificates tini \
+  && rm -rf /var/lib/apt/lists/*
 
-# --- Fetch AUTOMATIC1111 (pinned tag or SHA) ---
-WORKDIR ${REPO_DIR}
-RUN git init && \
-    git remote add origin https://github.com/AUTOMATIC1111/stable-diffusion-webui && \
-    git fetch --depth 1 origin ${WEBUI_VERSION} && \
-    git checkout FETCH_HEAD && \
-    git rev-parse --short HEAD && git show -s --format='%h %s'
+# Make `python` the default
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 1 \
+ && python -m pip install --upgrade pip setuptools wheel
 
-# --- Python venv + Torch (CUDA 12.1) + xformers + JupyterLab (pinned) ---
-RUN python3 -m venv ${VENV_DIR} && \
-    ${VENV_DIR}/bin/pip install --upgrade pip setuptools wheel && \
-    ${VENV_DIR}/bin/pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cu121 \
-      torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0 && \
-    ${VENV_DIR}/bin/pip install --no-cache-dir xformers==0.0.27.post2 && \
-    ${VENV_DIR}/bin/pip install --no-cache-dir \
+# ---- PyTorch (CUDA 12.1 wheels) ----
+RUN pip install --index-url https://download.pytorch.org/whl/cu121 \
+      torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0
+
+# ---- JupyterLab (pinned to avoid anyio/exceptiongroup breakages) ----
+# These versions play nicely on Python 3.10 in containers.
+RUN pip install \
       jupyterlab==4.2.5 \
-      notebook==7.2.2 \
-      jupyter-server==2.14.2 \
+      notebook==7.1.3 \
+      jupyter-server==2.13.0 \
       anyio==4.4.0 \
-      exceptiongroup==1.2.2 \
-      ipywidgets==8.1.3 \
-      nbformat==5.10.4 \
-      nbclient==0.10.0 && \
-    ${VENV_DIR}/bin/pip cache purge
+      exceptiongroup==1.2.1 \
+      jupyterlab_server==2.27.2 \
+      jupyter_server_terminals==0.5.3 \
+      jupyter-lsp==2.2.5
 
-# --- Copy nginx + supervisor configs ---
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY supervisord.conf /etc/supervisor/conf.d/services.conf
+# Defaults (you can override per-template)
+ENV JUPYTER_PORT=8888 \
+    JUPYTER_TOKEN= # leave empty to require no token; set a value to enable auth
 
-# --- Expose ports ---
-# 3000 = nginx front door, 7860 = A1111 (direct), 8888 = Jupyter (direct)
-EXPOSE 3000 7860 8888
+# Non-root workdir for child images to build upon
+WORKDIR /workspace
 
-# --- Supervisor is PID 1 (runs nginx + A1111 + Jupyter) ---
-ENTRYPOINT []
-CMD ["/usr/bin/supervisord","-n","-c","/etc/supervisor/conf.d/services.conf"]
+# Tini as entrypoint (plays nice with signals); child images can override CMD
+ENTRYPOINT ["/usr/bin/tini", "--"]
+
+# Example default command just starts a shell.
+# Child images (A1111/Forge) will supply their own start script / CMD.
+CMD ["/bin/bash"]
