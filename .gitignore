@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints
+
+# Virtual environments
+.env
+.venv
+ENV/
+env/
+venv/
+*.swp
+
+# Docker
+*.log
+*.pid
+*.seed
+*.bak
+*.tar
+*.tmp
+docker-compose.override.yml
+
+# Local dev
+workspace/
+models/
+outputs/
+checkpoints/
+extensions/
+
+# VSCode / IDEs
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
