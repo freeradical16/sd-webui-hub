@@ -3,10 +3,9 @@ name: build
 on:
   push:
     branches: [ "main" ]
-    tags: [ "v*" ]   # build/push when you publish v0.1.0 etc.
+    tags: [ "v*" ]        # build/push when you publish vX.Y.Z
   workflow_dispatch:
 
-# IMPORTANT: allow Actions to publish to GHCR
 permissions:
   contents: read
   packages: write
@@ -17,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
@@ -29,9 +28,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Generate tags/labels automatically:
-      # - On main:   ghcr.io/<user>/sd-webui-hub:main and :sha-<shortsha>
-      # - On tag vX: ghcr.io/<user>/sd-webui-hub:vX and :latest
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
@@ -50,6 +46,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # optional cache (speeds up subsequent builds)
           cache-from: type=gha
           cache-to: type=gha,mode=max
