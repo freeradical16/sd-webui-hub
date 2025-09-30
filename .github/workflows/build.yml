@@ -3,7 +3,7 @@ name: build
 on:
   push:
     branches: [ "main" ]
-    tags: [ "v*" ]        # build/push when you publish vX.Y.Z
+    tags: [ "v*" ]              # build/push when you publish vX.Y.Z
   workflow_dispatch:
 
 permissions:
@@ -34,10 +34,14 @@ jobs:
         with:
           images: ghcr.io/freeradical16/sd-webui-hub
           tags: |
-            type=raw,value=main,enable={{is_default_branch}}
+            # when pushing to main
+            type=raw,value=main,enable=${{ github.ref == 'refs/heads/main' }}
+            # always add a short-sha tag
             type=sha,format=short,prefix=sha-
+            # if this is a tag like v0.1.0, add that exact tag
             type=ref,event=tag
-            type=raw,value=latest,enable={{is_tag}}
+            # and also mark it as latest when it's a v* tag
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
