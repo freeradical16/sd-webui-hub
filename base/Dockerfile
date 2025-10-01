@@ -1,4 +1,4 @@
-⁸# ---- Base: CUDA + cuDNN on Ubuntu 22.04 ----
+# ---- Base: CUDA + cuDNN on Ubuntu 22.04 ----
 FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive \
