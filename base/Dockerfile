@@ -48,6 +48,9 @@ EXPOSE 8888
 COPY base-start.sh /usr/local/bin/base-start.sh
 RUN chmod +x /usr/local/bin/base-start.sh
 
+# Copy example notebooks into the image
+COPY notebooks /opt/examples
+
 # Keep tini (good signal handling), run our launcher by default
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["/usr/local/bin/base-start.sh"]
