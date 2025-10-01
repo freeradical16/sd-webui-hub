@@ -52,5 +52,5 @@ RUN chmod +x /usr/local/bin/base-start.sh
 COPY notebooks /opt/examples
 
 # Keep tini (good signal handling), run our launcher by default
-ENTRYPOINT ["/usr/bin/tini", "--"]
+ENTRYPOINT ["/usr/bin/tini","-g","-s","--"]
 CMD ["/usr/local/bin/base-start.sh"]
