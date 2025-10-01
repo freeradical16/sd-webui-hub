@@ -1,49 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# ---- Config (overridable via env / RunPod template) ----
-JUPYTER_PORT="${JUPYTER_PORT:-8888}"
-JUPYTER_ROOT="${JUPYTER_ROOT:-/workspace}"
-JUPYTER_TOKEN="${JUPYTER_TOKEN:-}"
+# Defaults (envs can be overridden by template)
+export JUPYTER_PORT="${JUPYTER_PORT:-8888}"
 
-# Ensure workspace exists
-mkdir -p "$JUPYTER_ROOT"
-
-# ---- Seed example notebooks/files into /workspace (first boot only) ----
-# Copies everything from /opt/examples to /workspace if the target file doesn't exist.
-if [ -d /opt/examples ]; then
-  shopt -s nullglob
-  for src in /opt/examples/*; do
-    bn="$(basename "$src")"
-    dst="${JUPYTER_ROOT}/${bn}"
-    if [ ! -e "$dst" ]; then
-      cp -r "$src" "$dst"
-      echo "[base] Seeded example: ${bn}"
-    fi
-  done
-  shopt -u nullglob
+# Seed the sample notebook if missing
+if [ ! -f /workspace/environment_check.ipynb ]; then
+  mkdir -p /workspace
+  cp -n /opt/sd-webui-hub/notebooks/environment_check.ipynb /workspace/ || true
 fi
 
-# ---- Auth handling ----
-# Empty token => no auth (public/testing). Non-empty => require token.
-if [[ -z "$JUPYTER_TOKEN" ]]; then
-  TOKEN_FLAG="--ServerApp.token=''"
-  echo "[base] Jupyter auth: DISABLED (no token)"
-else
-  TOKEN_FLAG="--ServerApp.token=${JUPYTER_TOKEN}"
-  echo "[base] Jupyter auth: token required"
-fi
+# Trust the sample notebook to avoid the "Not Trusted" banner
+jupyter trust /workspace/environment_check.ipynb >/dev/null 2>&1 || true
 
-echo "[base] Starting JupyterLab"
-echo "       root: ${JUPYTER_ROOT}"
-echo "       port: ${JUPYTER_PORT}"
-
+# Start JupyterLab (proxy-friendly, no-auth)
+# Logs to /workspace/jupyter.log so you can tail it in the pod
 exec jupyter lab \
-  --ServerApp.root_dir="${JUPYTER_ROOT}" \
-  --ServerApp.ip=0.0.0.0 \
+  --ServerApp.root_dir=/workspace \
   --ServerApp.port="${JUPYTER_PORT}" \
-  --ServerApp.allow_remote_access=True \
+  --ServerApp.ip=0.0.0.0 \
+  --ServerApp.token='' \
+  --ServerApp.password='' \
+  --ServerApp.allow_origin='*' \
   --ServerApp.disable_check_xsrf=True \
+  --ServerApp.allow_remote_access=True \
+  --ServerApp.trust_xheaders=True \
   --no-browser \
-  --allow-root \
-  ${TOKEN_FLAG}
+  >> /workspace/jupyter.log 2>&1
