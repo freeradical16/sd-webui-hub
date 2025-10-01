@@ -45,7 +45,7 @@ ENV JUPYTER_ROOT=/workspace
 EXPOSE 8888
 
 # Add launcher and make it executable
-COPY base-start.sh /usr/local/bin/base-start.sh
+COPY base/base-start.sh /usr/local/bin/base-start.sh
 RUN chmod +x /usr/local/bin/base-start.sh
 
 # Copy example notebooks into the image
