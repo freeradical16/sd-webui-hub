@@ -1,4 +1,4 @@
-# ---- Base: CUDA + cuDNN on Ubuntu 22.04 ----
+⁸# ---- Base: CUDA + cuDNN on Ubuntu 22.04 ----
 FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -32,8 +32,9 @@ RUN pip install \
       jupyter-lsp==2.2.5
 
 # Defaults (you can override per-template)
+# Leave JUPYTER_TOKEN empty ("") to disable auth; set a value to enable it
 ENV JUPYTER_PORT=8888 \
-    JUPYTER_TOKEN= # leave empty to require no token; set a value to enable auth
+    JUPYTER_TOKEN=""
 
 # Non-root workdir for child images to build upon
 WORKDIR /workspace
