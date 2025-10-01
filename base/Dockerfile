@@ -19,17 +19,16 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 1 \
 RUN pip install --index-url https://download.pytorch.org/whl/cu121 \
       torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0
 
-# ---- JupyterLab (pinned to avoid anyio/exceptiongroup breakages) ----
-# These versions play nicely on Python 3.10 in containers.
-RUN pip install \
-      jupyterlab==4.2.5 \
-      notebook==7.1.3 \
-      jupyter-server==2.13.0 \
-      anyio==4.4.0 \
-      exceptiongroup==1.2.1 \
-      jupyterlab_server==2.27.2 \
-      jupyter_server_terminals==0.5.3 \
-      jupyter-lsp==2.2.5
+# Jupyter bits (minimal, compatible pins)
+RUN pip install --no-cache-dir \
+    jupyterlab==4.2.5 \
+    notebook==7.2.1 \
+    jupyterlab_server==2.27.2 \
+    jupyter_server_terminals==0.5.3 \
+    jupyterlab-lsp==5.1.0 \
+    "python-lsp-server[all]==1.11.0"
+# Note: no explicit jupyter-server/anyio/exceptiongroup pins;
+# pip will resolve a server >=2.14 and matching anyio.
 
 # Defaults (you can override per-template)
 # Leave JUPYTER_TOKEN empty ("") to disable auth; set a value to enable it
