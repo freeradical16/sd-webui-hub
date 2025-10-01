@@ -47,7 +47,7 @@ jobs:
             type=semver,pattern={{version}},prefix=base-
             # base-0.1
             type=semver,pattern={{major}}.{{minor}},prefix=base-
-            # base-v0.1.0 (keeps the v* tag too if you like)
+            # base-v0.1.0 (keep the v* tag too if you like)
             type=ref,event=tag,prefix=base-
           flavor: |
             latest=true
@@ -70,6 +70,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./base/Dockerfile
           push: true
           tags: ${{ steps.meta_release.outputs.tags }}
           labels: ${{ steps.meta_release.outputs.labels }}
@@ -82,6 +83,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./base/Dockerfile
           push: true
           tags: ${{ steps.meta_test.outputs.tags }}
           labels: ${{ steps.meta_test.outputs.labels }}
