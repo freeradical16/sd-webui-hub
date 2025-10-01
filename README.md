@@ -1,74 +1,74 @@
 # sd-webui-hub
 
-**All-in-one Stable Diffusion WebUI hub** — a containerized image with AUTOMATIC1111, JupyterLab, and nginx reverse proxy, managed by supervisord.  
-Designed for cloud GPU platforms (e.g., RunPod) with a clean flat file structure and GitHub Actions for automatic builds to GHCR.
-
-## Features
-
-- **AUTOMATIC1111** (pinned at `v1.10.1`) running on port 7860
-- **JupyterLab** (auth disabled in this image) running on port 8888
-- **nginx** reverse proxy on port 3000
-  - `/` → A1111
-  - `/jupyter/` → JupyterLab
-- **supervisord** keeps all services alive (PID 1)
-- **Torch 2.4.0 (CUDA 12.1)** + **xformers 0.0.27.post2**
-- OpenCV runtime libraries included
-- Clean flat repo structure, no `scripts/` folder
-- Automatic GitHub Actions workflow to build & push images to GHCR
-
-## RunPod usage
-
-**Ports to expose:**
-- `3000` (recommended front door)
-- `7860` (optional direct A1111)
-- `8888` (optional direct Jupyter)
-
-**Volume:**
-- Mount at `/workspace`
-
-**Environment variables:**
-```
-DATA_DIR=/workspace/a1111-data
-WEBUI_ARGS=--listen --api --xformers
-# Jupyter auth is disabled in this build
-```
-
-### Access
-
-- A1111 → `…:3000/`
-- JupyterLab → `…:3000/jupyter/`
-- Direct (debug):
-  - A1111 → `…:7860/`
-  - JupyterLab → `…:8888/`
-
-## Build locally
-
-```
-docker build -t sd-webui-hub:local .
-docker run --gpus all -p 3000:3000 -p 7860:7860 -p 8888:8888 \
-  -v $PWD/workspace:/workspace \
-  sd-webui-hub:local
-```
-
-## Security note
-
-⚠️ **Jupyter auth is disabled** in this image (`--ServerApp.token='' --ServerApp.password=''`).  
-Do not expose port 8888 or `/jupyter/` to the open internet. For shared/public use, re-enable auth by setting `JUPYTER_TOKEN` and removing `--ServerApp.disable_check_xsrf=True`.
-
-## Roadmap
-
-Future versions of **sd-webui-hub** will expand beyond AUTOMATIC1111 + Jupyter to include:
-
-- **ComfyUI** (graph-based workflows)
-- **Forge** (A1111 fork with more performance features)
-- **Swarm UI** (multi-backend orchestration)
-- **SD.Next** (alternative WebUI)
-- More WebUI frontends as the ecosystem evolves
+**sd-webui-hub** is an all-in-one container project for Stable Diffusion WebUIs.  
+This repo publishes a **shared base image** with CUDA, PyTorch, and JupyterLab pinned for stability.  
+Other variants (A1111, Forge, ComfyUI, etc.) will build on this base in future releases.
 
 ---
 
-## Versioning
+## Base image
 
-- Tags follow [Semantic Versioning](https://semver.org/), prefixed with `v`
-- Example: `v0.1.0`, `v0.2.0`, etc.
-- GitHub Actions pushes `:main` and `:<commit-sha>` images to GHCR
+The base image includes:
+
+- **OS & GPU stack**
+  - Ubuntu 22.04 (LTS)
+  - CUDA 12.1.1 + cuDNN 8 (runtime)
+- **Python environment**
+  - Python 3.10, pip, venv
+  - PyTorch 2.4.0 (cu121), torchvision 0.19.0, torchaudio 2.4.0
+  - xformers 0.0.27.post2
+  - Common ML deps: safetensors, numpy, pillow, requests, tqdm, pyyaml, psutil, opencv-python-headless, transformers, diffusers, accelerate
+- **Jupyter environment**
+  - JupyterLab 4.2.x + Notebook 7.1.x + Jupyter Server 2.13.x
+  - Pins included for stable async dependencies (`anyio`, `exceptiongroup`)
+
+---
+
+## How to pull
+
+From GHCR:
+
+```bash
+# Latest from main branch
+docker pull ghcr.io/freeradical16/sd-webui-hub:base-main
+
+# Latest release tag
+docker pull ghcr.io/freeradical16/sd-webui-hub:base-v0.1.0
+```
+
+---
+
+## How to run locally
+
+```bash
+docker run --gpus all -it --rm \
+  -p 8888:8888 \
+  -v $PWD/workspace:/workspace \
+  ghcr.io/freeradical16/sd-webui-hub:base-v0.1.0 \
+  bash
+```
+
+Start Jupyter inside the container:
+
+```bash
+jupyter lab --no-browser --ip=0.0.0.0 --port=8888 \
+  --NotebookApp.token="" --notebook-dir=/workspace
+```
+
+---
+
+## Roadmap
+
+Planned variants (built on this base):
+
+- A1111 (Automatic1111 WebUI)
+- Forge (A1111 performance fork)
+- ComfyUI (graph-based workflow)
+- SwarmUI (multi-backend orchestrator)
+- SD.Next (modern fork)
+
+---
+
+## License
+
+MIT © 2025 freeradical16
