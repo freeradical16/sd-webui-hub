@@ -38,9 +38,16 @@ ENV JUPYTER_PORT=8888 \
 # Non-root workdir for child images to build upon
 WORKDIR /workspace
 
-# Tini as entrypoint (plays nice with signals); child images can override CMD
-ENTRYPOINT ["/usr/bin/tini", "--"]
+# You can also set JUPYTER_ROOT via env; default is /workspace
+ENV JUPYTER_ROOT=/workspace
 
-# Example default command just starts a shell.
-# Child images (A1111/Forge) will supply their own start script / CMD.
-CMD ["/bin/bash"]
+# Expose Jupyter for RunPod
+EXPOSE 8888
+
+# Add launcher and make it executable
+COPY base-start.sh /usr/local/bin/base-start.sh
+RUN chmod +x /usr/local/bin/base-start.sh
+
+# Keep tini (good signal handling), run our launcher by default
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["/usr/local/bin/base-start.sh"]
