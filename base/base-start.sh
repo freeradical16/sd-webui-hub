@@ -28,9 +28,8 @@ exec jupyter lab \
   --port="${PORT}" \
   --no-browser \
   --allow-root \
+  --IdentityProvider.token="${TOKEN}" \
   --ServerApp.root_dir="${ROOT}" \
-  --ServerApp.allow_remote_access=True \
-  --ServerApp.token="${TOKEN}" \
   --ServerApp.allow_origin="*" \
-  --ServerApp.disable_check_xsrf=True \
-  --NotebookApp.notebook_dir="${ROOT}"   # harmless shim for older plugins
+  --ServerApp.allow_remote_access=True \
+  --ServerApp.disable_check_xsrf=True# harmless shim for older plugins
