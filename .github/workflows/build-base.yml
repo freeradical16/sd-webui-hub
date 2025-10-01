@@ -69,7 +69,7 @@ jobs:
         if: steps.meta_release.outputs.tags != ''
         uses: docker/build-push-action@v5
         with:
-          context: ./base
+          context: .
           push: true
           tags: ${{ steps.meta_release.outputs.tags }}
           labels: ${{ steps.meta_release.outputs.labels }}
@@ -81,7 +81,7 @@ jobs:
         if: steps.meta_test.outputs.tags != ''
         uses: docker/build-push-action@v5
         with:
-          context: ./base
+          context: .
           push: true
           tags: ${{ steps.meta_test.outputs.tags }}
           labels: ${{ steps.meta_test.outputs.labels }}
