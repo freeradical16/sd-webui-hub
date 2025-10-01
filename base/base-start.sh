@@ -32,4 +32,4 @@ exec jupyter lab \
   --ServerApp.root_dir="${ROOT}" \
   --ServerApp.allow_origin="*" \
   --ServerApp.allow_remote_access=True \
-  --ServerApp.disable_check_xsrf=True# harmless shim for older plugins
+  --ServerApp.disable_check_xsrf=True # harmless shim for older plugins
