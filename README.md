@@ -66,5 +66,5 @@ Later, additional start scripts (e.g. `start-runpod.sh`, `start-vast.sh`, `start
 ---
 
 ## 📜 License
-MIT License © 2025 [Your Name or Handle]  
+MIT License © 2025 freeradical16  
 See [LICENSE](LICENSE) for details.
