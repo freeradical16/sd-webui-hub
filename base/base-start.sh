@@ -1,29 +1,33 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Defaults (envs can be overridden by template)
-export JUPYTER_PORT="${JUPYTER_PORT:-8888}"
+# -------- settings --------
+ROOT="${JUPYTER_ROOT:-/workspace}"
+PORT="${JUPYTER_PORT:-8888}"
+TOKEN="${JUPYTER_TOKEN:-}"
 
-# Seed the sample notebook if missing
-if [ ! -f /workspace/environment_check.ipynb ]; then
-  mkdir -p /workspace
-  cp -n /opt/sd-webui-hub/notebooks/environment_check.ipynb /workspace/ || true
+# sample notebook path in the image (matches Dockerfile copy)
+NOTEBOOK_SRC="/opt/examples/environment_check.ipynb"
+NOTEBOOK_DST="${ROOT}/environment_check.ipynb"
+
+echo "[init] JUPYTER_ROOT=${ROOT}  PORT=${PORT}  TOKEN=${TOKEN:+<set>}"
+
+mkdir -p "${ROOT}"
+
+# copy once if present and not already there
+if [ -f "${NOTEBOOK_SRC}" ]; then
+  cp -n "${NOTEBOOK_SRC}" "${NOTEBOOK_DST}" || true
+  echo "[init] placed ${NOTEBOOK_DST}"
+else
+  echo "[init] sample notebook not found at ${NOTEBOOK_SRC} (skipping copy)"
 fi
 
-# Trust the sample notebook to avoid the "Not Trusted" banner
-jupyter trust /workspace/environment_check.ipynb >/dev/null 2>&1 || true
-
-# Start JupyterLab (proxy-friendly, no-auth)
-# Logs to /workspace/jupyter.log so you can tail it in the pod
+# launch jupyter
 exec jupyter lab \
-  --ServerApp.root_dir=/workspace \
-  --ServerApp.port="${JUPYTER_PORT}" \
-  --ServerApp.ip=0.0.0.0 \
-  --ServerApp.token='' \
-  --ServerApp.password='' \
-  --ServerApp.allow_origin='*' \
-  --ServerApp.disable_check_xsrf=True \
-  --ServerApp.allow_remote_access=True \
-  --ServerApp.trust_xheaders=True \
+  --ip=0.0.0.0 \
+  --port="${PORT}" \
   --no-browser \
-  >> /workspace/jupyter.log 2>&1
+  --ServerApp.token="${TOKEN}" \
+  --ServerApp.allow_origin="*" \
+  --ServerApp.base_url="/" \
+  --NotebookApp.notebook_dir="${ROOT}"
