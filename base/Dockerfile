@@ -52,10 +52,15 @@ RUN chmod +x /usr/local/bin/base-start.sh
 # Copy example notebooks into the image
 COPY notebooks /opt/examples
 
-# Disable JupyterLab extension manager (quiet logs, smaller image)
-RUN mkdir -p /usr/local/etc/jupyter/labconfig && \
-    printf '{ "disabledExtensions": { "@jupyterlab/extensionmanager-extension": true } }\n' \
-      > /usr/local/etc/jupyter/labconfig/page_config.json
+# Disable JupyterLab Extension Manager globally
+RUN mkdir -p /usr/local/share/jupyter/lab/settings && \
+    printf '%s\n' \
+      '{' \
+      '  "@jupyterlab/extensionmanager-extension:plugin": {' \
+      '    "enabled": false' \
+      '  }' \
+      '}' \
+    > /usr/local/share/jupyter/lab/settings/overrides.json
       
 # Keep tini (good signal handling), run our launcher by default
 ENTRYPOINT ["/usr/bin/tini","-g","-s","--"]
