@@ -39,9 +39,9 @@ exec jupyter lab \
   --allow-root \
   --IdentityProvider.token="${TOKEN}" \
   --ServerApp.root_dir="${ROOT}" \
-  --ServerApp.allow_origin="*" \
+  --ServerApp.default_url=/lab \
+  --ServerApp.base_url=/ \
+  --ServerApp.trust_xheaders=True \
   --ServerApp.allow_remote_access=True \
-  --ServerApp.disable_check_xsrf=True \
-  --ServerApp.config_file=/etc/jupyter/jupyter_server_config.py \
-  --LabApp.extension_manager=False \
-  --LabApp.extensions_in_dev_mode=False
+  --ServerApp.allow_origin="*" \
+  --ServerApp.disable_check_xsrf=True
