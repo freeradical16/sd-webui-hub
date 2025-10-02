@@ -1,70 +1,36 @@
-# 🧩 SD WebUI Hub — Base Image
+## 🧩 Base Image Quickstart (`v0.1.0-base`)
 
-This repository contains a modular **base Docker image** for GPU workflows with JupyterLab preconfigured.  
-It’s designed to be the foundation for running Stable Diffusion WebUI variants (A1111, Forge, ComfyUI, etc.) on cloud GPU services.
+The **base image** provides a clean CUDA + PyTorch + JupyterLab environment that higher-level WebUI images (A1111, Forge, ComfyUI, etc.) will build on.
 
-## 🚀 Current Status
-- ✅ **Base image** with CUDA 12.1, PyTorch, and JupyterLab
-- ✅ Auto-starts JupyterLab on port **8888**
-- ✅ Seeds an example notebook: `environment_check.ipynb`
-- ⚠️ No authentication if `JUPYTER_TOKEN` is left unset (default).  
-  For public use, set `JUPYTER_TOKEN` to a secure value in your template.
+### Using on RunPod
 
-Future releases will add A1111, Forge, ComfyUI, and others, all built **FROM** this base.
-
----
-
-## 🔧 Using on RunPod
-
-1. Build & push your image (or pull from GHCR if released):
+1. In your RunPod template, set the image to:
    ```
-   ghcr.io/freeradical16/sd-webui-hub:base-dev
+   ghcr.io/freeradical16/sd-webui-hub:base-v0.1.0
    ```
 
-2. In your RunPod template:
-   - **Image:** `ghcr.io/freeradical16/sd-webui-hub:base-dev`
+2. Template settings:
    - **Expose port:** `8888`
-   - **Start command:** leave empty (auto-starts Jupyter)
    - **Volume mount:** `/workspace`
+   - **Start command:** leave empty (container auto-starts JupyterLab)
    - **Env variables:**
      ```env
      JUPYTER_PORT=8888
      JUPYTER_ROOT=/workspace
-     JUPYTER_TOKEN=   # blank = no auth; set to enable token login
+     JUPYTER_TOKEN=   # blank = no auth; set a value to enable token login
      ```
 
-3. Launch pod → open port 8888 → you should land in JupyterLab.
+3. Launch your pod, then open the `8888` port from the RunPod UI to access JupyterLab.
 
 ---
 
-## 🧪 Test Your GPU
-Open `environment_check.ipynb` in JupyterLab and run all cells.  
-This will print Python, PyTorch, CUDA versions, GPU name, and run a simple CUDA matmul.
+### Test Notebook
 
----
+The image includes a built-in notebook:  
+- `environment_check.ipynb`  
+  Located under `/workspace` on container start.  
+  - Prints Python / PyTorch / CUDA versions  
+  - Runs `nvidia-smi` if available  
+  - Executes a small GPU matmul test  
 
-## 📂 Repo Layout
-```
-sd-webui-hub/
-├── base/
-│   ├── Dockerfile         # Base image definition
-│   ├── base-start.sh      # Startup script (seeds notebook + starts Jupyter)
-├── notebooks/
-│   └── environment_check.ipynb  # Example GPU check notebook
-├── .github/workflows/
-│   └── build-base.yml     # GitHub Actions CI for builds
-├── .gitignore
-└── README.md
-```
-
----
-
-## 🌐 Other Cloud Providers (future)
-The base image is cloud-agnostic.  
-Later, additional start scripts (e.g. `start-runpod.sh`, `start-vast.sh`, `start-paperspace.sh`) can be added here if specific providers require custom initialization logic.
-
----
-
-## 📜 License
-MIT License © 2025 freeradical16  
-See [LICENSE](LICENSE) for details.
+Simply **run the first code cell** to see all environment checks.
