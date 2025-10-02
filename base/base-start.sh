@@ -11,19 +11,19 @@ NOTEBOOK_SRC="/opt/examples/environment_check.ipynb"
 NOTEBOOK_DST="${ROOT}/environment_check.ipynb"
 
 echo "[init] JUPYTER_ROOT=${ROOT}  PORT=${PORT}  TOKEN=${TOKEN:+<set>}"
-
 mkdir -p "${ROOT}"
 
-# copy once if present and not already there
+# Seed the example notebook once (don't overwrite user's copy)
 if [ -f "${NOTEBOOK_SRC}" ] && [ ! -f "${NOTEBOOK_DST}" ]; then
   cp "${NOTEBOOK_SRC}" "${NOTEBOOK_DST}" || true
   echo "[init] placed ${NOTEBOOK_DST}"
 fi
 
-# IMPORTANT: do NOT write any server config that sets LabApp.extension_manager = False
-# The UI is already disabled via overrides.json baked in the image.
+# IMPORTANT:
+# - Do NOT set c.LabApp.extension_manager = False (JL4 expects a string)
+# - UI is already disabled via overrides.json baked into the image
 
-# launch jupyter (RunPod-friendly; '/' redirects to '/lab')
+# Launch Jupyter (RunPod-friendly; '/' redirects to '/lab')
 exec jupyter lab \
   --ip=0.0.0.0 \
   --port="${PORT}" \
@@ -37,5 +37,3 @@ exec jupyter lab \
   --ServerApp.allow_remote_access=True \
   --ServerApp.allow_origin="*" \
   --ServerApp.disable_check_xsrf=True
-  # If you ever see JL try to create a manager again, you can add:
-  # --LabApp.extension_manager=""
