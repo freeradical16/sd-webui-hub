@@ -1,32 +1,32 @@
-# Python cache
+# Python
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
-
-# Virtual environments
-.venv/
-venv/
-ENV/
+*.so
+.build/
+dist/
+pip-wheel-metadata/
 
 # Jupyter
 .ipynb_checkpoints/
-*.ipynb_checkpoints
-
-# Logs and temp files
-*.log
-*.out
-*.err
-*.tmp
+*.ipynb_convert/
+.profile_sync/
 
 # OS junk
 .DS_Store
 Thumbs.db
 
-# Docker
-*.pid
-*.seed
+# Logs/temp
+*.log
+*.tmp
 *.swp
+*.swo
 
-# RunPod workspace (don’t commit user data if you mount /workspace to repo root)
+# Virtual envs
+.venv/
+.env/
+venv/
+
+# Project data (mounted workspace)
 workspace/
