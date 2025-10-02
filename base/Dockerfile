@@ -29,8 +29,6 @@ RUN pip install --no-cache-dir \
     "python-lsp-server[all]==1.11.0" \
     jupyterlab-git==0.50.1 \
     ipywidgets==8.1.5 \
-    psutil==5.9.8 \
-    jupyterlab-system-monitor==0.8.0
 
 # Defaults (you can override per-template)
 # Leave JUPYTER_TOKEN empty ("") to disable auth; set a value to enable it
