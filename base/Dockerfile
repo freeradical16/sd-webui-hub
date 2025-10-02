@@ -22,7 +22,7 @@ RUN pip install --index-url https://download.pytorch.org/whl/cu121 \
 # --- JupyterLab & tooling ---
 RUN pip install --no-cache-dir \
     jupyterlab==4.2.5 \
-    notebook==7.1.3 \
+    notebook==7.2.1 \
     jupyterlab_server==2.27.2 \
     jupyter_server_terminals==0.5.3 \
     jupyterlab-lsp==5.1.0 \
