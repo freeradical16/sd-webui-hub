@@ -22,6 +22,15 @@ else
   echo "[init] sample notebook not found at ${NOTEBOOK_SRC} (skipping copy)"
 fi
 
+# Disable JupyterLab Extension Manager at the server level (no instantiation, no log noise)
+mkdir -p ~/.jupyter
+cat > ~/.jupyter/jupyter_server_config.py <<'PY'
+c = get_config()
+c.LabApp.extension_manager = False
+c.LabApp.extensions_in_dev_mode = False
+PY
+echo "[init] Extension Manager disabled via server config"
+
 # launch jupyter
 exec jupyter lab \
   --ip=0.0.0.0 \
