@@ -35,6 +35,12 @@ RUN pip install --no-cache-dir \
 ENV HF_HUB_DISABLE_TELEMETRY=1 \
     HF_HUB_ENABLE_HF_TRANSFER=1
 
+# Helpful defaults for roots/ports/args (can be overridden in RunPod env)
+ENV WEBUI_PORT=7860 \
+    WEBUI_ROOT=/workspace/a1111 \
+    WEBUI_ARGS="" \
+    JUPYTER_PORT=8888 \
+    JUPYTER_ROOT=/workspace
 # ---- Supervisord to run A1111 + JupyterLab ----
 RUN apt-get update && apt-get install -y --no-install-recommends supervisor && \
     rm -rf /var/lib/apt/lists/*
