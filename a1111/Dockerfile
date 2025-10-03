@@ -26,6 +26,13 @@ RUN pip install --no-cache-dir \
    && pip install --no-cache-dir \
       -r /opt/stable-diffusion-webui/requirements.txt
 
+# Optional: speed/VRAM: xformers matching CUDA 12.1 (your base)
+RUN pip install --no-cache-dir "xformers==0.0.27.post2"
+
+# Faster, quieter Hugging Face downloads
+ENV HF_HUB_DISABLE_TELEMETRY=1 \
+    HF_HUB_ENABLE_HF_TRANSFER=1
+
 # Start script
 COPY a1111/a1111-start.sh /usr/local/bin/a1111-start.sh
 RUN chmod +x /usr/local/bin/a1111-start.sh
