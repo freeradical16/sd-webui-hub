@@ -1,86 +1,127 @@
 # sd-webui-hub
 
-Base container image for **Stable Diffusion WebUI stacks**.  
-Designed to be lean, reproducible, and **RunPod-ready** with CUDA 12.1 + PyTorch + JupyterLab.
+A lean, reproducible **hub of GPU container images** for Stable Diffusion tooling.  
+Built for cloud GPU hosts (e.g., **RunPod**) with **CUDA 12.1 + PyTorch** and **JupyterLab** as the base.
 
 ---
 
-## 🚀 Quick Start (RunPod)
+## 📦 Images & Tags
 
-1. In RunPod, create a **Custom Template**.
-2. Use this image (replace `latest` with a specific version if you want):
+This repository publishes **separate images** per component with **component-scoped tags**.
 
+| Component | Stable tags (examples)                                      | Latest pointer                | Dev/Test tags (examples)         | Pull example |
+|----------:|--------------------------------------------------------------|-------------------------------|----------------------------------|--------------|
+| **Base**  | `base-v0.1.0`, `base-0.1`                                   | `base-latest`                 | `base-dev`, `base-test-2025-10-03` | `docker pull ghcr.io/freeradical16/sd-webui-hub:base-v0.1.0` |
+| **A1111** | `a1111-v1.10.1`, `a1111-1.10`                               | `a1111-latest`                | `a1111-dev`, `a1111-test-2025-10-03` | `docker pull ghcr.io/freeradical16/sd-webui-hub:a1111-v1.10.1` |
+
+**Notes**
+- `*-latest` moves **only** on a component’s release. Dev/test builds never touch `latest`.
+- Component images can pin a specific base, e.g. `FROM ...:base-v0.1.0` for reproducibility.
+
+---
+
+## 🚀 Quick Start on RunPod
+
+### Base (JupyterLab)
+1. Use this image:
    ```
    ghcr.io/freeradical16/sd-webui-hub:base-latest
    ```
+2. Expose port **8888**.
+3. (Optional) Mount a volume at `/workspace`.
 
-3. Expose port **8888**.  
-4. (Optional) Mount a volume at `/workspace`.  
+When the pod starts, click **port 8888** → it redirects to **/lab**.  
+A sample notebook `/workspace/environment_check.ipynb` verifies Python/Torch/CUDA and runs a small GPU test.
 
-When the pod starts, click the **8888 port** → JupyterLab opens directly.  
-A sample notebook `environment_check.ipynb` will be available under `/workspace`.
+### Automatic1111 (Web UI)
+1. Use this image:
+   ```
+   ghcr.io/freeradical16/sd-webui-hub:a1111-latest
+   ```
+2. Expose port **7860** (A1111) and **8888** (JupyterLab from base, if you want it too).
+3. (Optional) Mount a volume at `/workspace`.
+
+The WebUI starts on **7860** with RunPod-friendly flags (`--listen`, no auto-update, proxy-safe).
 
 ---
 
 ## 🔧 Environment Variables
 
-| Variable         | Default      | Notes                                       |
-|------------------|--------------|---------------------------------------------|
-| `JUPYTER_PORT`   | `8888`       | Port JupyterLab listens on                  |
-| `JUPYTER_ROOT`   | `/workspace` | Root directory for Jupyter file browser     |
-| `JUPYTER_TOKEN`  | *(empty)*    | If empty → **no auth**. Set a string to require login. |
+| Variable         | Default      | Purpose                                           |
+|------------------|--------------|---------------------------------------------------|
+| `JUPYTER_PORT`   | `8888`       | Port for JupyterLab                               |
+| `JUPYTER_ROOT`   | `/workspace` | Root directory for Jupyter file browser           |
+| `JUPYTER_TOKEN`  | *(empty)*    | If empty → **no auth**. Set a value to require login. |
+| `WEBUI_PORT`     | `7860`       | (A1111) Port for the Web UI                       |
+| `WEBUI_ROOT`     | `/workspace` | (A1111) Working directory                         |
+
+> Security: for public/shared deployments, set a `JUPYTER_TOKEN`.
 
 ---
 
-## 🧪 Example Notebook
+## 🛠 What’s in the Base image?
 
-The `environment_check.ipynb` notebook checks:
-- Python & PyTorch versions
-- CUDA availability
-- `nvidia-smi` output
-- Small GPU matmul test
-
-Run it once to verify the GPU is working.
-
----
-
-## 🛠️ Notes
-
-- Based on `nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04`.  
-- Includes **PyTorch 2.4.0 (cu121 wheels)**, JupyterLab 4.2.5, Notebook 7.2.1.  
-- Extension Manager UI disabled (for reproducibility + smaller images).  
-- Launches Jupyter with proxy-friendly flags for RunPod (auto-redirects `/` → `/lab`).  
+- **CUDA 12.1.1 + cuDNN8** (Ubuntu 22.04 runtime)  
+- **PyTorch 2.4.0** (cu121 wheels: `torch`, `torchvision`, `torchaudio`)  
+- **JupyterLab 4.2.5** + **Notebook 7.2.1**  
+- **jupyterlab-lsp** + **python-lsp-server** (lightweight code intelligence)  
+- Jupyter configured for proxies (auto-redirect `/` → `/lab`)  
+- Extension Manager UI disabled via `overrides.json` (reproducible builds)  
+- Example notebook seeded to `/workspace` on first boot
 
 ---
 
-## 🔮 Next Steps
+## 🔒 Reproducibility
 
-This repo is the **base layer**. Planned additions:
-
-- `a1111` → Automatic1111 Stable Diffusion WebUI  
-- `forge` → SD.Next / Forge fork  
-- `comfyui` → ComfyUI pipeline builder  
-- Additional tools (InvokeAI, SwarmUI, etc.)
-
-Each will build **on top of this base** using a layered Dockerfile + dedicated workflow.
-
-If you only need a clean CUDA + Torch + JupyterLab base, **stick with this image**.  
-If you want the full WebUI stack, watch for new tags/releases.
+- Component images pin versions/tags:
+  - **A1111** is pinned to the official **`v1.10.1`** release.
+  - Components may explicitly `FROM ghcr.io/freeradical16/sd-webui-hub:base-vX.Y.Z`.
+- Release tags are **immutable**: `*-vX.Y.Z`, plus shorthand minor `*-X.Y`.
 
 ---
 
-## 📦 Releases
+## 🧪 Dev/Test vs Releases
 
-We use [semantic versioning](https://semver.org/) for base images.  
+- **Dev/Test builds** (manual):  
+  - Tags like `base-dev`, `a1111-dev` (and timestamped variants).  
+  - Never move `*-latest`.
 
-| Tag          | Description                        |
-|--------------|------------------------------------|
-| `base-v0.1.0` | First stable release (CUDA 12.1, Torch 2.4.0, JupyterLab 4.2.5) |
-| `base-latest` | Tracks the most recent stable release |
-| `base-dev-*`  | Development/test builds (not guaranteed stable) |
+- **Releases** (Git tag push):  
+  - Base → `base-vX.Y.Z`, `base-X.Y`, move `base-latest`  
+  - A1111 → `a1111-vX.Y.Z`, `a1111-X.Y`, move `a1111-latest`
 
-To pin a specific version in RunPod, use the full tag:
+You can release components **independently** (component-scoped tags).
 
+---
+
+## 📥 Pull Examples
+
+```bash
+# Base (stable)
+docker pull ghcr.io/freeradical16/sd-webui-hub:base-v0.1.0
+docker pull ghcr.io/freeradical16/sd-webui-hub:base-0.1
+docker pull ghcr.io/freeradical16/sd-webui-hub:base-latest
+
+# A1111 (stable)
+docker pull ghcr.io/freeradical16/sd-webui-hub:a1111-v1.10.1
+docker pull ghcr.io/freeradical16/sd-webui-hub:a1111-1.10
+docker pull ghcr.io/freeradical16/sd-webui-hub:a1111-latest
+
+# Dev/Test (manual builds)
+docker pull ghcr.io/freeradical16/sd-webui-hub:base-dev
+docker pull ghcr.io/freeradical16/sd-webui-hub:a1111-dev
 ```
-ghcr.io/freeradical16/sd-webui-hub:base-v0.1.0
-```
+
+---
+
+## 🗺 Roadmap
+
+- Add **Forge / SD.Next** image (component-scoped tags: `forge-*`)
+- Add **ComfyUI** image
+- Optional “build-all” workflow for monorepo snapshots (single tag to build all components)
+
+---
+
+## 📄 License
+
+MIT © 2025 freeradical16
