@@ -50,15 +50,16 @@ The WebUI starts on **7860** with RunPod-friendly flags (`--listen`, no auto-upd
 
 ## 🔧 Environment Variables
 
-| Variable         | Default      | Purpose                                           |
-|------------------|--------------|---------------------------------------------------|
-| `JUPYTER_PORT`   | `8888`       | Port for JupyterLab                               |
-| `JUPYTER_ROOT`   | `/workspace` | Root directory for Jupyter file browser           |
-| `JUPYTER_TOKEN`  | *(empty)*    | If empty → **no auth**. Set a value to require login. |
-| `WEBUI_PORT`     | `7860`       | (A1111) Port for the Web UI                       |
-| `WEBUI_ROOT`     | `/workspace` | (A1111) Working directory                         |
+| Variable        | Default      | Purpose                                                                 |
+|-----------------|--------------|-------------------------------------------------------------------------|
+| `JUPYTER_PORT`  | `8888`       | Port for JupyterLab                                                     |
+| `JUPYTER_ROOT`  | `/workspace` | Root directory for Jupyter file browser                                 |
+| `JUPYTER_TOKEN` | *(empty)*    | If empty → **no auth**. Set a value to require login.                   |
+| `WEBUI_PORT`    | `7860`       | (A1111) Port for the Web UI                                             |
+| `WEBUI_ROOT`    | `/workspace` | (A1111) Working directory                                               |
+| `WEBUI_ARGS`    | *(empty)*    | (A1111) Extra CLI args passed to `launch.py` (e.g. `--xformers --api`) |
 
-> Security: for public/shared deployments, set a `JUPYTER_TOKEN`.
+> ⚠️ **Security**: for public/shared deployments, set a `JUPYTER_TOKEN`.
 
 ---
 
