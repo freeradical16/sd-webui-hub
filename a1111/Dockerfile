@@ -20,16 +20,20 @@ RUN git clone --depth 1 --branch ${A1111_TAG} \
       https://github.com/AUTOMATIC1111/stable-diffusion-webui.git \
       /opt/stable-diffusion-webui
 
-# Pre-install Python deps (Torch already present in base)
+# Pre-install python deps (Torch already present in base image)
 RUN pip install --no-cache-dir \
       -r /opt/stable-diffusion-webui/requirements_versions.txt \
    && pip install --no-cache-dir \
       -r /opt/stable-diffusion-webui/requirements.txt
 
-# Optional: speed/VRAM: xformers matching CUDA 12.1 (your base)
-RUN pip install --no-cache-dir "xformers==0.0.27.post2"
+# Optional extras:
+# - xformers: VRAM/memory optimizations (matching CUDA 12.1 from base)
+# - hf_transfer: enables Hugging Face fast download backend
+RUN pip install --no-cache-dir \
+      "xformers==0.0.27.post2" \
+      hf_transfer
 
-# Faster, quieter Hugging Face downloads
+# Faster & quieter Hugging Face downloads
 ENV HF_HUB_DISABLE_TELEMETRY=1 \
     HF_HUB_ENABLE_HF_TRANSFER=1
 
