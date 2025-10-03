@@ -1,33 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Configurable via RunPod template env vars
 PORT="${WEBUI_PORT:-7860}"
-ROOT="${WEBUI_ROOT:-/workspace}"
 EXTRA="${WEBUI_ARGS:-}"
 
-APP_DIR="${ROOT}/stable-diffusion-webui"
+# App lives here (not shadowed by RunPod volume)
+WEBUI_SRC="/opt/stable-diffusion-webui"
 
-echo "[init] A1111 v1.10.1 | root=${ROOT} port=${PORT}"
-mkdir -p "${ROOT}/models" "${ROOT}/outputs" "${ROOT}/extensions" || true
+# User data (persistent via RunPod volume at /workspace)
+# This keeps models, outputs, configs, extensions installed by the user.
+DATA_DIR="${WEBUI_DATA_DIR:-/workspace/a1111}"
 
-# Fail fast with a clear message if the repo isn't present
-if [[ ! -d "${APP_DIR}" ]]; then
-  echo "[init][ERROR] ${APP_DIR} not found."
-  echo "Contents of ${ROOT}:"
-  ls -la "${ROOT}" || true
-  exit 1
-fi
+echo "[init] A1111 v1.10.1 | src=${WEBUI_SRC}  data=${DATA_DIR}  port=${PORT}"
 
-cd "${APP_DIR}"
+# Ensure the user data dir exists with common subfolders
+mkdir -p "${DATA_DIR}"/{models,outputs,extensions}
+
+cd "${WEBUI_SRC}"
 
 # Launch
 exec python launch.py \
   --listen \
-  --port "${PORT}" \
+  --port="${PORT}" \
+  --data-dir="${DATA_DIR}" \
   --enable-insecure-extension-access \
-  --disable-console-progressbars \
   --skip-torch-cuda-test \
   --skip-update \
-  # --api \            # uncomment if you want the REST API / healthchecks
   ${EXTRA}
