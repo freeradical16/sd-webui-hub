@@ -45,6 +45,11 @@ ENV WEBUI_PORT=7860 \
 RUN apt-get update && apt-get install -y --no-install-recommends supervisor && \
     rm -rf /var/lib/apt/lists/*
 
+# Silence extension manager instantiation/log noise
+RUN mkdir -p /etc/jupyter && \
+  printf 'c=get_config()\nc.LabApp.extension_manager=False\nc.LabApp.extensions_in_dev_mode=False\n' \
+  > /etc/jupyter/jupyter_server_config.py
+
 COPY a1111/supervisord.conf /etc/supervisord.conf
 
 # Be explicit about both services' ports
