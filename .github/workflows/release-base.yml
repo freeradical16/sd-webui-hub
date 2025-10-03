@@ -1,38 +1,50 @@
-name: release base
+name: release-base
 
 on:
   push:
     tags:
-      - "v*.*.*"   # e.g., v0.1.0
+      - "base-v*.*.*"   # e.g., base-v0.2.0
 
 permissions:
   contents: read
   packages: write
 
 jobs:
-  base:
+  docker:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker meta (semver + base-latest)
+      - name: Docker meta (release)
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
+            # base-v0.2.0
             type=semver,pattern={{version}},prefix=base-
+            # base-0.2
             type=semver,pattern={{major}}.{{minor}},prefix=base-
           flavor: |
-            latest=false
+            latest=true
+          labels: |
+            org.opencontainers.image.title=sd-webui-hub (base)
+            org.opencontainers.image.description=Base CUDA + Jupyter image for sd-webui-hub
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
 
-      - name: Build & push (versioned tags)
+      - name: Build & push (release)
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -42,10 +54,4 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      # push a component-scoped "latest" tag for clarity
-      - name: Tag base-latest
-        run: |
-          REF="ghcr.io/${{ github.repository }}"
-          DIGEST="$(docker buildx imagetools inspect "${REF}:$(echo "${{ steps.meta.outputs.tags }}" | head -n1 | sed 's/.*://')" --format '{{json .Manifest.Digest}}' | tr -d '"')"
-          docker buildx imagetools create -t "${REF}:base-latest" "${REF}@${DIGEST}"
+          provenance: mode=max
