@@ -18,7 +18,8 @@ Versioning follows the [VERSIONING.md](VERSIONING.md) guide: **MAJOR.MINOR.PATCH
 
 ---
 
-## [a1111-v0.2.0] - 2025-10-03
+## [a1111-v0.2.0] - 2025-10-03  
+**Highlights:** A1111 + JupyterLab combined into one container (multi-UI support).
 
 ### Added
 - **JupyterLab** (4.2.5 + Notebook 7.2.1) bundled with A1111, running under `supervisord` on port **8888**.
@@ -44,7 +45,36 @@ Versioning follows the [VERSIONING.md](VERSIONING.md) guide: **MAJOR.MINOR.PATCH
 
 ---
 
-## [base-v0.1.1] - 2025-10-02
+## [a1111-v0.1.0] - 2025-10-02  
+**Highlights:** First A1111 image (WebUI only, no Jupyter).
+
+### Added
+- First release of **Automatic1111 WebUI** container.
+- Based on `base-v0.1.1`.
+- Includes:
+  - Stable Diffusion WebUI **v1.10.1** cloned from upstream.
+  - Installed `requirements_versions.txt` + `requirements.txt`.
+  - Torch/CUDA stack inherited from base image.
+- Launch script starts A1111 on **port 7860** with:
+  - `--listen`  
+  - `--enable-insecure-extension-access`  
+  - `--skip-torch-cuda-test`  
+  - `--skip-update`
+
+### Changed
+- Jupyter was **not included** in this release — WebUI-only container.
+
+### Roadmap Alignment
+- Establishes the first A1111 container on top of the base.
+- Proved viability of running WebUI cleanly inside RunPod.
+
+### Tags
+- `a1111-v0.1.0`
+
+---
+
+## [base-v0.1.1] - 2025-10-02  
+**Highlights:** Stable base with PyTorch + JupyterLab (reproducible, proxy-safe).
 
 ### Added
 - Base image with **CUDA 12.1.1 + cuDNN8** (Ubuntu 22.04 runtime).
@@ -69,7 +99,8 @@ Versioning follows the [VERSIONING.md](VERSIONING.md) guide: **MAJOR.MINOR.PATCH
 
 ---
 
-## [base-v0.1.0] - 2025-10-01
+## [base-v0.1.0] - 2025-10-01  
+**Highlights:** First working base image (GPU + JupyterLab).
 
 ### Added
 - Initial working **Base image** with:
