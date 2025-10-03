@@ -1,7 +1,7 @@
 # sd-webui-hub
 
-[![Base Latest](https://img.shields.io/badge/base-latest-blue?logo=docker&label=base)](https://github.com/freeradical16/sd-webui-hub/pkgs/container/sd-webui-hub)
-[![A1111 Latest](https://img.shields.io/badge/a1111-latest-purple?logo=docker&label=a1111)](https://github.com/freeradical16/sd-webui-hub/pkgs/container/sd-webui-hub)
+[![Base v0.1.1](https://img.shields.io/badge/base-v0.1.1-blue?logo=docker&label=base)](https://github.com/freeradical16/sd-webui-hub/pkgs/container/sd-webui-hub)
+[![A1111 v0.1.0](https://img.shields.io/badge/a1111-v0.1.0-purple?logo=docker&label=a1111)](https://github.com/freeradical16/sd-webui-hub/pkgs/container/sd-webui-hub)
 
 A lean, reproducible **hub of GPU container images** for Stable Diffusion tooling.  
 Built for cloud GPU hosts (e.g., **RunPod**) with **CUDA 12.1 + PyTorch** and **JupyterLab** as the base.
@@ -14,12 +14,12 @@ This repository publishes **separate images** per component with **component-sco
 
 | Component | Stable tags (examples)                                      | Latest pointer                | Dev/Test tags (examples)         | Pull example |
 |----------:|--------------------------------------------------------------|-------------------------------|----------------------------------|--------------|
-| **Base**  | `base-v0.1.0`, `base-0.1`                                   | `base-latest`                 | `base-dev`, `base-test-2025-10-03` | `docker pull ghcr.io/freeradical16/sd-webui-hub:base-v0.1.0` |
-| **A1111** | `a1111-v1.10.1`, `a1111-1.10`                               | `a1111-latest`                | `a1111-dev`, `a1111-test-2025-10-03` | `docker pull ghcr.io/freeradical16/sd-webui-hub:a1111-v1.10.1` |
+| **Base**  | `base-v0.1.1`, `base-0.1`                                   | `base-latest`                 | `base-dev`, `base-test-2025-10-03` | `docker pull ghcr.io/freeradical16/sd-webui-hub:base-v0.1.1` |
+| **A1111** | `a1111-v0.1.0`, `a1111-0.1`                                 | `a1111-latest`                | `a1111-dev`, `a1111-test-2025-10-03` | `docker pull ghcr.io/freeradical16/sd-webui-hub:a1111-v0.1.0` |
 
 **Notes**
 - `*-latest` moves **only** on a component’s release. Dev/test builds never touch `latest`.
-- Component images can pin a specific base, e.g. `FROM ...:base-v0.1.0` for reproducibility.
+- Component images can pin a specific base, e.g. `FROM ...:base-v0.1.1` for reproducibility.
 
 ---
 
@@ -77,7 +77,8 @@ The WebUI starts on **7860** with RunPod-friendly flags (`--listen`, no auto-upd
 ## 🔒 Reproducibility
 
 - Component images pin versions/tags:
-  - **A1111** is pinned to the official **`v1.10.1`** release.
+  - **Base** pinned at `base-v0.1.1`.
+  - **A1111** pinned at the official upstream **v1.10.1**, released here as **`a1111-v0.1.0`**.
   - Components may explicitly `FROM ghcr.io/freeradical16/sd-webui-hub:base-vX.Y.Z`.
 - Release tags are **immutable**: `*-vX.Y.Z`, plus shorthand minor `*-X.Y`.
 
@@ -101,13 +102,13 @@ You can release components **independently** (component-scoped tags).
 
 ```bash
 # Base (stable)
-docker pull ghcr.io/freeradical16/sd-webui-hub:base-v0.1.0
+docker pull ghcr.io/freeradical16/sd-webui-hub:base-v0.1.1
 docker pull ghcr.io/freeradical16/sd-webui-hub:base-0.1
 docker pull ghcr.io/freeradical16/sd-webui-hub:base-latest
 
 # A1111 (stable)
-docker pull ghcr.io/freeradical16/sd-webui-hub:a1111-v1.10.1
-docker pull ghcr.io/freeradical16/sd-webui-hub:a1111-1.10
+docker pull ghcr.io/freeradical16/sd-webui-hub:a1111-v0.1.0
+docker pull ghcr.io/freeradical16/sd-webui-hub:a1111-0.1
 docker pull ghcr.io/freeradical16/sd-webui-hub:a1111-latest
 
 # Dev/Test (manual builds)
