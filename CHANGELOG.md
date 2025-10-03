@@ -7,8 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [Unreleased]
-- Upcoming support for `a1111`, `forge`, `comfyui` layers on top of the base image.
+- Upcoming support for `forge`, `comfyui` layers on top of the base image.
 - Additional notebooks and tooling.
+
+---
+
+## [a1111-v0.1.0] - 2025-10-04
+### Added
+- First stable release of the **Automatic1111 WebUI image**.
+- Built on `base-v0.1.1` (CUDA 12.1.1, PyTorch 2.4.0).
+- AUTOMATIC1111 pinned at upstream tag **v1.10.1**.
+- Preinstalled extras:
+  - `xformers==0.0.27.post2` (CUDA 12.1 build)
+  - `hf_transfer` (fast Hugging Face downloads)
+- Persists models, outputs, configs, and extensions under `/workspace/a1111`.
+
+### Usage
+- Image: `ghcr.io/freeradical16/sd-webui-hub:a1111-latest`
+- Expose port **7860**.
+- Mount volume at `/workspace`.
 
 ---
 
@@ -36,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/freeradical16/sd-webui-hub/compare/base-v0.1.1...HEAD
+[Unreleased]: https://github.com/freeradical16/sd-webui-hub/compare/a1111-v0.1.0...HEAD
+[a1111-v0.1.0]: https://github.com/freeradical16/sd-webui-hub/releases/tag/a1111-v0.1.0
 [base-v0.1.1]: https://github.com/freeradical16/sd-webui-hub/releases/tag/base-v0.1.1
 [v0.1.0]: https://github.com/freeradical16/sd-webui-hub/releases/tag/v0.1.0
