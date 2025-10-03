@@ -1,8 +1,9 @@
-name: build-a1111-release
+name: release-a1111
 
 on:
   push:
-    tags: [ "v*" ]   # e.g., v1.10.1
+    tags:
+      - "a1111-v*.*.*"   # e.g., a1111-v1.10.1
 
 permissions:
   contents: read
@@ -11,6 +12,7 @@ permissions:
 jobs:
   docker:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,6 +39,10 @@ jobs:
             type=semver,pattern={{major}}.{{minor}},prefix=a1111-
           flavor: |
             latest=true
+          labels: |
+            org.opencontainers.image.title=sd-webui-hub (a1111)
+            org.opencontainers.image.description=Automatic1111 image on sd-webui-hub base
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
 
       - name: Build & push (release)
         uses: docker/build-push-action@v5
@@ -48,3 +54,4 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          provenance: mode=max
