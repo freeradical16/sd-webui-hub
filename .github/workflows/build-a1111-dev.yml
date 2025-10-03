@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Test tag (e.g., dev, test-2025-10-02)"
+        description: "Dev tag (e.g., dev, test-2025-10-04)"
         required: true
         default: "dev"
 
@@ -29,23 +29,12 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker meta (manual test)
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}
-          tags: |
-            type=raw,value=a1111-${{ inputs.tag }}
-          flavor: |
-            latest=false
-
-      - name: Build & push (manual test)
+      - name: Build & push (manual dev)
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./a1111/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ghcr.io/${{ github.repository }}:a1111-${{ inputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
