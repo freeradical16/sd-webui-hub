@@ -27,22 +27,17 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker meta (release)
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}
-          tags: |
-            # base-v0.2.0
-            type=semver,pattern={{version}},prefix=base-
-            # base-0.2
-            type=semver,pattern={{major}}.{{minor}},prefix=base-
-          flavor: |
-            latest=true
-          labels: |
-            org.opencontainers.image.title=sd-webui-hub (base)
-            org.opencontainers.image.description=Base CUDA + Jupyter image for sd-webui-hub
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+      # Extract "0.2.0" and "0.2" from "base-v0.2.0"
+      - name: Derive version pieces
+        id: v
+        shell: bash
+        run: |
+          REF="${GITHUB_REF_NAME}"   # e.g. base-v0.2.0
+          VER="${REF#base-v}"        # -> 0.2.0
+          MM="${VER%.*}"             # -> 0.2
+          echo "ver=${VER}" >> $GITHUB_OUTPUT
+          echo "mm=${MM}"  >> $GITHUB_OUTPUT
+          echo "Release version: ${VER} (minor: ${MM})"
 
       - name: Build & push (release)
         uses: docker/build-push-action@v5
@@ -50,8 +45,14 @@ jobs:
           context: .
           file: ./base/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            ghcr.io/${{ github.repository }}:base-v${{ steps.v.outputs.ver }}
+            ghcr.io/${{ github.repository }}:base-${{ steps.v.outputs.mm }}
+            ghcr.io/${{ github.repository }}:base-latest
+          labels: |
+            org.opencontainers.image.title=sd-webui-hub (base)
+            org.opencontainers.image.description=Base CUDA + Jupyter image for sd-webui-hub
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: mode=max
