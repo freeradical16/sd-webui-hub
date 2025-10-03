@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [base-v0.1.1] - 2025-10-03
+### Changed
+- Release workflow now uses **component-scoped tags** (`base-v*.*.*`) so base can be released independently of other images.
+- Ensured `base-latest` only updates on **base releases** (not on dev/test builds).
+- Improved workflow metadata consistency (explicit labels, provenance).
+
+---
+
 ## [v0.1.0] - 2025-10-02
 ### Added
 - First stable release of **`sd-webui-hub` base image**.
@@ -28,5 +36,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/freeradical16/sd-webui-hub/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/freeradical16/sd-webui-hub/compare/base-v0.1.1...HEAD
+[base-v0.1.1]: https://github.com/freeradical16/sd-webui-hub/releases/tag/base-v0.1.1
 [v0.1.0]: https://github.com/freeradical16/sd-webui-hub/releases/tag/v0.1.0
