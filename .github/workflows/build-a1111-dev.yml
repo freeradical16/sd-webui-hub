@@ -1,4 +1,4 @@
-name: build-a1111-dev
+name: build a1111 (manual)
 
 on:
   workflow_dispatch:
