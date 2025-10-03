@@ -1,7 +1,7 @@
 # sd-webui-hub
 
-[![Base v0.1.1](https://img.shields.io/badge/base-v0.1.1-blue?logo=docker&label=base)](https://github.com/freeradical16/sd-webui-hub/pkgs/container/sd-webui-hub)
-[![A1111 v0.1.0](https://img.shields.io/badge/a1111-v0.1.0-purple?logo=docker&label=a1111)](https://github.com/freeradical16/sd-webui-hub/pkgs/container/sd-webui-hub)
+[![Base v0.1.1](https://img.shields.io/badge/base-v0.1.1-blue?logo=docker&label=base)](https://github.com/freeradical16/sd-webui-hub/pkgs/container/sd-webui-hub/533618479)
+[![A1111 v0.1.0](https://img.shields.io/badge/a1111-v0.1.0-purple?logo=docker&label=a1111)](https://github.com/freeradical16/sd-webui-hub/pkgs/container/sd-webui-hub/534121884)
 
 A lean, reproducible **hub of GPU container images** for Stable Diffusion tooling.  
 Built for cloud GPU hosts (e.g., **RunPod**) with **CUDA 12.1 + PyTorch** and **JupyterLab** as the base.
