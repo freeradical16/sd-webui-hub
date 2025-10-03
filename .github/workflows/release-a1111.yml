@@ -12,7 +12,6 @@ permissions:
 jobs:
   docker:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,22 +26,17 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker meta (release)
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}
-          tags: |
-            # a1111-v1.10.1
-            type=semver,pattern={{version}},prefix=a1111-
-            # a1111-1.10
-            type=semver,pattern={{major}}.{{minor}},prefix=a1111-
-          flavor: |
-            latest=true
-          labels: |
-            org.opencontainers.image.title=sd-webui-hub (a1111)
-            org.opencontainers.image.description=Automatic1111 image on sd-webui-hub base
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+      # Extract "1.10.1" and "1.10" from "a1111-v1.10.1"
+      - name: Derive version pieces
+        id: v
+        shell: bash
+        run: |
+          REF="${GITHUB_REF_NAME}"     # e.g. a1111-v1.10.1
+          VER="${REF#a1111-v}"         # -> 1.10.1
+          MM="${VER%.*}"               # -> 1.10
+          echo "ver=${VER}" >> $GITHUB_OUTPUT
+          echo "mm=${MM}"  >> $GITHUB_OUTPUT
+          echo "Release version: ${VER} (minor: ${MM})"
 
       - name: Build & push (release)
         uses: docker/build-push-action@v5
@@ -50,8 +44,14 @@ jobs:
           context: .
           file: ./a1111/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            ghcr.io/${{ github.repository }}:a1111-v${{ steps.v.outputs.ver }}
+            ghcr.io/${{ github.repository }}:a1111-${{ steps.v.outputs.mm }}
+            ghcr.io/${{ github.repository }}:a1111-latest
+          labels: |
+            org.opencontainers.image.title=sd-webui-hub (a1111)
+            org.opencontainers.image.description=AUTOMATIC1111 WebUI on sd-webui-hub base
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: mode=max
