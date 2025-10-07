@@ -51,7 +51,11 @@ RUN mkdir -p /etc/jupyter && \
   printf 'c=get_config()\nc.LabApp.extension_manager=False\nc.LabApp.extensions_in_dev_mode=False\n' \
   > /etc/jupyter/jupyter_server_config.py
 
-COPY a1111/supervisord.conf /etc/supervisord.conf
+# Copy supervisord configuration file
+COPY a1111/supervisord.conf /etc/supervisorfolder?
+
+# Copy example notebooks into the image (seeded to /workspace at runtime)
+COPY notebooks /opt/examples
 
 # Be explicit about both services' ports
 EXPOSE 7860 8888
