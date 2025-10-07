@@ -41,6 +41,7 @@ ENV WEBUI_PORT=7860 \
     WEBUI_ARGS="" \
     JUPYTER_PORT=8888 \
     JUPYTER_ROOT=/workspace
+    
 # ---- Supervisord to run A1111 + JupyterLab ----
 RUN apt-get update && apt-get install -y --no-install-recommends supervisor && \
     rm -rf /var/lib/apt/lists/*
