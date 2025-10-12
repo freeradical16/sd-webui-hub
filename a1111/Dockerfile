@@ -52,7 +52,7 @@ RUN mkdir -p /etc/jupyter && \
   > /etc/jupyter/jupyter_server_config.py
 
 # Copy supervisord configuration file
-COPY a1111/supervisord.conf /etc/supervisorfolder?
+COPY a1111/supervisord.conf /etc/supervisord.conf
 
 # Copy example notebooks into the image (seeded to /workspace at runtime)
 COPY notebooks /opt/examples
