@@ -48,8 +48,8 @@ EXPOSE 8888
 COPY base/base-start.sh /usr/local/bin/base-start.sh
 RUN chmod +x /usr/local/bin/base-start.sh
 
-# Copy example notebooks into the image (seeded to /workspace at runtime)
-COPY notebooks /opt/examples
+# Copy ONLY the environment check notebook
+COPY notebooks/environment_check.ipynb /opt/examples/environment_check.ipynb
 
 # Disable JupyterLab Extension Manager UI (quiet + reproducible)
 RUN mkdir -p /usr/local/share/jupyter/lab/settings && \
