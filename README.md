@@ -1,6 +1,6 @@
 # sd-webui-hub
 
-[![Base v0.1.1](https://img.shields.io/badge/base-v0.1.1-blue?logo=docker&label=base)](https://github.com/freeradical16/sd-webui-hub/pkgs/container/sd-webui-hub/533618479?tag=base-v0.1.1)
+[![Base v0.1.2](https://img.shields.io/badge/base-v0.1.2-blue?logo=docker&label=base)](https://github.com/freeradical16/sd-webui-hub/pkgs/container/sd-webui-hub/533618479?tag=base-v0.1.2)
 [![A1111 v0.2.0](https://img.shields.io/badge/a1111-v0.2.0-purple?logo=docker&label=a1111)](https://github.com/freeradical16/sd-webui-hub/pkgs/container/sd-webui-hub/534121884?tag=a1111-v0.2.0)
 
 A lean, reproducible **hub of GPU container images** for Stable Diffusion tooling.  
@@ -12,12 +12,12 @@ Built for cloud GPU hosts (e.g., **RunPod**) with **CUDA 12.1 + PyTorch** and **
 
 | Component | Stable tags (examples)                           | Latest pointer    | Dev/Test tags (examples)         | Pull example |
 |----------:|--------------------------------------------------|------------------|----------------------------------|--------------|
-| **Base**  | `base-v0.1.1`, `base-0.1`                       | `base-latest`    | `base-dev`, `base-test-2025-10-03` | `docker pull ghcr.io/freeradical16/sd-webui-hub:base-v0.1.1` |
+| **Base**  | `base-v0.1.2`, `base-0.1`                       | `base-latest`    | `base-dev`, `base-test-2025-10-03` | `docker pull ghcr.io/freeradical16/sd-webui-hub:base-v0.1.2` |
 | **A1111** | `a1111-v0.2.0`, `a1111-0.2`                     | `a1111-latest`   | `a1111-dev`, `a1111-test-2025-10-03` | `docker pull ghcr.io/freeradical16/sd-webui-hub:a1111-v0.2.0` |
 
 **Notes**
 - `*-latest` moves **only** on a component’s release. Dev/test builds never touch `latest`.
-- Component images can pin a specific base, e.g. `FROM ...:base-v0.1.1` for reproducibility.
+- Component images can pin a specific base, e.g. `FROM ...:base-v0.1.2` for reproducibility.
 
 ---
 
@@ -91,7 +91,7 @@ You can release components **independently** (component-scoped tags).
 
 ```bash
 # Base (stable)
-docker pull ghcr.io/freeradical16/sd-webui-hub:base-v0.1.1
+docker pull ghcr.io/freeradical16/sd-webui-hub:base-v0.1.2
 docker pull ghcr.io/freeradical16/sd-webui-hub:base-0.1
 docker pull ghcr.io/freeradical16/sd-webui-hub:base-latest
 
