@@ -18,6 +18,28 @@ Versioning follows the [VERSIONING.md](VERSIONING.md) guide: **MAJOR.MINOR.PATCH
 
 ---
 
+## [base-v0.1.2] - 2025-10-14  
+**Highlights:** Environment notebook isolation; leaner base build.
+
+### Added
+- `environment_check.ipynb` copied into `/opt/examples/` for seeding.
+- On first Jupyter start, the notebook is placed into `/workspace` if missing.
+
+### Changed
+- Base Dockerfile now copies **only** the environment notebook (other notebooks move to A1111/derivative images).
+- Clearer separation of responsibilities: base stays minimal; app images own their notebooks.
+
+### Fixed
+- Prevented accidental inclusion of extra notebooks.
+- Slightly reduced build context and image footprint.
+
+### Tags
+- `base-v0.1.2`
+- `base-0.1`
+- `base-latest`
+
+---
+
 ## [a1111-v0.2.0] - 2025-10-03  
 **Highlights:** A1111 + JupyterLab combined into one container (multi-UI support).
 
