@@ -31,9 +31,23 @@ RUN pip install --no-cache-dir \
       "xformers==0.0.27.post2" \
       hf_transfer
 
+# ---- Add extension/runtime deps (ReActor, OpenPose Editor, ControlNet SVG support) ----
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      gcc g++ pkg-config libcairo2-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir \
+      "numpy<2" \
+      "onnx>=1.17,<1.20" \
+      "onnxruntime-gpu==1.17.1" \
+      "albumentations==1.4.3" \
+      "insightface==0.7.3" \
+      "prettytable" \
+      "easydict" \
+      "cython" \
+      "basicsr==1.4.2"
+
 # ---- Notebook widget stack (for your model/extension notebooks) ----
-# ipywidgets for UI controls; tqdm & requests for progress + direct downloads;
-# huggingface_hub for HF pulls.
 RUN pip install --no-cache-dir \
       ipywidgets==8.1.3 \
       tqdm==4.66.5 \
@@ -65,11 +79,6 @@ RUN mkdir -p /etc/jupyter && \
 COPY a1111/supervisord.conf /etc/supervisord.conf
 
 # Copy ALL example notebooks into the image (seeded to /workspace at runtime)
-# Expecting these in your repo:
-# - notebooks/environment_check.ipynb
-# - notebooks/a1111-model-installer-sd15.ipynb
-# - notebooks/a1111-model-installer-sdxl.ipynb
-# - notebooks/a1111-extension-installer.ipynb
 COPY notebooks /opt/examples
 
 # Be explicit about both services' ports
