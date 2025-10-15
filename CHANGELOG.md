@@ -18,6 +18,22 @@ Versioning follows the [VERSIONING.md](VERSIONING.md) guide: **MAJOR.MINOR.PATCH
 
 ---
 
+## [a1111-v0.3.0] - 2025-10-15
+### Added
+- Baked in dependency stack for ReActor (InsightFace + ONNX) and OpenPose Editor (`basicsr`).
+- Added optional ControlNet SVG preprocessor support (`libcairo2-dev`, `gcc`, `pkg-config`).
+- Added ipywidgets/tqdm/request/huggingface_hub to support all included Jupyter notebooks.
+
+### Changed
+- Based on `base-v0.1.2` image (CUDA 12.1 + PyTorch 2.4).
+- Simplified notebook installation flow; all notebooks auto-copied to `/workspace` on first boot.
+
+### Fixed
+- Eliminated runtime errors for InsightFace, OpenPose, and ControlNet preprocessors.
+- Reduced console noise from missing extension dependencies.
+
+---
+
 ## [base-v0.1.2] - 2025-10-14  
 **Highlights:** Environment notebook isolation; leaner base build.
 
